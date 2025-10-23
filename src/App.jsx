@@ -182,7 +182,7 @@ export default function App() {
 
     return (
         <>
-            <h1 className='text-4xl font-extrabold text-center bg-gray-200 h-12'>Todo App</h1>
+            <h1 className='text-4xl text-center bg-gray-200 h-12 font-inter'>Todo App</h1>
             <div className='flex items-center justify-around'>
                 <div className='w-96 my-5'>
                     <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='w-full' value={task} onChange={handleChange} onKeyDown={(e) => {
