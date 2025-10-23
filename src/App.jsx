@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { TextField } from '@mui/material';
 import Dropdown from './components/Dropdown';
@@ -30,6 +30,20 @@ export default function App() {
     const [sortOrder, setSortOrder] = useState("asc");
 
     const PRIORITY_INDEXES = { low: 1, medium: 2, high: 3 };
+
+    useEffect(() => {
+        const savedTodos = localStorage.getItem('todos')
+        if (savedTodos) {
+            setTodos(JSON.parse(savedTodos))
+        }
+        setIsLoaded(true);
+    }, []);
+
+    useEffect(() => {
+        if (isLoaded) {
+            localStorage.setItem("todos", JSON.stringify(todos));
+        }
+    }, [todos, isLoaded])
 
 
     const handleChange = (event) => {
