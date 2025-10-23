@@ -35,6 +35,7 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit }) {
                 <Table stickyHeader aria-label="todo table">
                     <TableHead>
                         <TableRow>
+                            <TableCell>S.No</TableCell>
                             <TableCell>Task</TableCell>
                             <TableCell>Priority</TableCell>
                             <TableCell>Category</TableCell>
@@ -48,6 +49,7 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit }) {
 
                             return (
                                 <TableRow key={actualIndex} hover>
+                                    <TableCell>{index + 1+"."}</TableCell>
                                     <TableCell
                                         onClick={() => toggle(actualIndex)}
                                         sx={{
