@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
+import { Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
@@ -56,7 +57,13 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit }) {
                                     >
                                         {item.name}
                                     </TableCell>
-                                    <TableCell>{item.priority}</TableCell>
+                                    <TableCell>{item.priority === "high" ? <Button variant="outlined" color="success">
+                                        high
+                                    </Button> : item.priority === "medium" ? <Button variant="outlined" color="info">
+                                        medium
+                                    </Button> : <Button variant="outlined" color="error">
+                                        low
+                                    </Button>}</TableCell>
                                     <TableCell>{item.category}</TableCell>
                                     <TableCell>
                                         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
