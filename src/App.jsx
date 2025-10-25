@@ -183,10 +183,10 @@ export default function App() {
     return (
         <>
             <h1 className='text-4xl text-center bg-gray-200 h-12 font-inter'>Todo App</h1>
-            <div className='lg:mx-auto md:max-w-screen lg:max-w-7xl py-16 p-6 lg:px-8'>
-                <div className='flex items-center justify-around'>
-                    <div className='w-96 my-5'>
-                        <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='w-full' value={task} onChange={handleChange} onKeyDown={(e) => {
+            <div className='lg:mx-auto lg:max-w-full py-8 p-6 lg:px-16'>
+                <div className='flex items-center justify-center gap-5'>
+                    <div className='md:w-96 md:my-5 md:mx-5'>
+                        <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='md:w-full' value={task} onChange={handleChange} onKeyDown={(e) => {
                             if (task.trim() !== '' && e.key === 'Enter') {
                                 submitClick()
                             }
@@ -232,7 +232,7 @@ export default function App() {
                         </div>
                     </div>
                 </div>
-                <div className='flex items-center justify-evenly'>
+                <div className='flex flex-wrap md:items-center md:justify-center md:gap-5 gap-y-5'>
                     <div >
                         <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-72 md:w-64' value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
@@ -304,7 +304,7 @@ export default function App() {
                         Apply Filters
                     </Button>
                 </div>
-                <div className='flex items-center justify-evenly lg:my-5 lg:mx-72 md:py-3'>
+                <div className='flex items-center justify-center lg:my-5 md:px-52 lg:px-0 md:py-5 lg:py-2 xl:py-4 md:gap-5 lg:gap-15'>
                     <Button variant="contained" disableElevation color="success" onClick={markComplete} className=''>
                         Mark All Complete
                     </Button>
