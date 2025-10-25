@@ -184,15 +184,15 @@ export default function App() {
         <>
             <h1 className='text-4xl text-center bg-gray-200 h-12 font-inter'>Todo App</h1>
             <div className='lg:mx-auto lg:max-w-full py-8 p-6 lg:px-16'>
-                <div className='flex items-center justify-center gap-5'>
+                <div className='flex flex-wrap md:flex-nowrap items-center justify-center gap-5 md:gap-0'>
                     <div className='md:w-96 md:my-5 md:mx-5'>
-                        <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='md:w-full' value={task} onChange={handleChange} onKeyDown={(e) => {
+                        <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='w-72' value={task} onChange={handleChange} onKeyDown={(e) => {
                             if (task.trim() !== '' && e.key === 'Enter') {
                                 submitClick()
                             }
                         }} required />
                     </div>
-                    <div className='flex items-center'>
+                    <div className='flex flex-wrap justify-center md:flex-nowrap items-center gap-y-3 mb-5'>
                         <Dropdown
                             label="Priority"
                             value={priority}
@@ -232,9 +232,9 @@ export default function App() {
                         </div>
                     </div>
                 </div>
-                <div className='flex flex-wrap md:items-center md:justify-center md:gap-5 gap-y-5'>
+                <div className='flex flex-wrap xl:flex-nowrap md:items-center md:justify-center md:gap-5 gap-y-5'>
                     <div >
-                        <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-72 md:w-64' value={search} onChange={e => setSearch(e.target.value)} />
+                        <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-64' value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
                     <div>
                         {/* <p className='text-center'>Priority</p> */}
@@ -304,7 +304,7 @@ export default function App() {
                         Apply Filters
                     </Button>
                 </div>
-                <div className='flex items-center justify-center lg:my-5 md:px-52 lg:px-0 md:py-5 lg:py-2 xl:py-4 md:gap-5 lg:gap-15'>
+                <div className='flex items-center justify-center lg:my-5 md:px-52 lg:px-0 md:py-5 lg:py-2 xl:py-4 md:gap-5 lg:gap-15 gap-2 my-5'>
                     <Button variant="contained" disableElevation color="success" onClick={markComplete} className=''>
                         Mark All Complete
                     </Button>
