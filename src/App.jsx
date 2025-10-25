@@ -183,139 +183,141 @@ export default function App() {
     return (
         <>
             <h1 className='text-4xl text-center bg-gray-200 h-12 font-inter'>Todo App</h1>
-            <div className='flex items-center justify-around'>
-                <div className='w-96 my-5'>
-                    <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='w-full' value={task} onChange={handleChange} onKeyDown={(e) => {
-                        if (task.trim() !== '' && e.key === 'Enter') {
-                            submitClick()
-                        }
-                    }} required />
-                </div>
-                <div className='flex items-center'>
-                    <Dropdown
-                        label="Priority"
-                        value={priority}
-                        name="priority"
-                        onChange={handleChange}
-                        onKeyDown={(e) => {
-                            if (priority.trim() !== '' && e.key === 'Enter') {
+            <div className='lg:mx-auto md:max-w-screen lg:max-w-7xl py-16 p-6 lg:px-8'>
+                <div className='flex items-center justify-around'>
+                    <div className='w-96 my-5'>
+                        <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='w-full' value={task} onChange={handleChange} onKeyDown={(e) => {
+                            if (task.trim() !== '' && e.key === 'Enter') {
                                 submitClick()
                             }
-                        }}
-                        options={[
-                            { label: "low", value: "low" },
-                            { label: "medium", value: "medium" },
-                            { label: "high", value: "high" },
-                        ]}
+                        }} required />
+                    </div>
+                    <div className='flex items-center'>
+                        <Dropdown
+                            label="Priority"
+                            value={priority}
+                            name="priority"
+                            onChange={handleChange}
+                            onKeyDown={(e) => {
+                                if (priority.trim() !== '' && e.key === 'Enter') {
+                                    submitClick()
+                                }
+                            }}
+                            options={[
+                                { label: "low", value: "low" },
+                                { label: "medium", value: "medium" },
+                                { label: "high", value: "high" },
+                            ]}
 
-                    />
-                    <Dropdown
-                        label="Category"
-                        name="category"
-                        value={category}
-                        onChange={handleChange}
-                        onKeyDown={(e) => {
-                            if (category.trim() !== '' && e.key === 'Enter') {
-                                submitClick()
-                            }
-                        }}
-                        options={[
-                            { label: "Work", value: "work" },
-                            { label: "Personal", value: "personal" },
-                        ]}
-                    />
-                    <div className='ml-4'>
-                        <Button variant="contained" disableElevation color="primary" onClick={submitClick}>
-                            Add
-                        </Button>
+                        />
+                        <Dropdown
+                            label="Category"
+                            name="category"
+                            value={category}
+                            onChange={handleChange}
+                            onKeyDown={(e) => {
+                                if (category.trim() !== '' && e.key === 'Enter') {
+                                    submitClick()
+                                }
+                            }}
+                            options={[
+                                { label: "Work", value: "work" },
+                                { label: "Personal", value: "personal" },
+                            ]}
+                        />
+                        <div className='ml-4'>
+                            <Button variant="contained" disableElevation color="primary" onClick={submitClick}>
+                                Add
+                            </Button>
+                        </div>
                     </div>
                 </div>
+                <div className='flex items-center justify-evenly'>
+                    <div >
+                        <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-72 md:w-64' value={search} onChange={e => setSearch(e.target.value)} />
+                    </div>
+                    <div>
+                        {/* <p className='text-center'>Priority</p> */}
+                        <Dropdown
+                            label="Priority"
+                            value={pendingFilPriority}
+                            onChange={(e) => setPendingFilPriority(e.target.value)}
+                            options={[
+                                { label: `all (${totalCount})`, value: "all" },
+                                { label: `low (${lowCount})`, value: "low" },
+                                { label: `medium (${mediumCount})`, value: "medium" },
+                                { label: `high (${highCount})`, value: "high" },
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        {/* <p className='text-center'>Category</p> */}
+                        <Dropdown
+                            label="Category"
+                            value={pendingFilCategory}
+                            onChange={(e) => setPendingFilCategory(e.target.value)}
+                            options={[
+                                { label: `all (${totalCount})`, value: "all" },
+                                { label: `Work (${workCount})`, value: "work" },
+                                { label: `Personal (${personalCount})`, value: "personal" },
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        {/* <p className='text-center'>Status</p> */}
+                        <Dropdown
+                            label="Status"
+                            value={pendingFiltered}
+                            onChange={(e) => setPendingFiltered(e.target.value)}
+                            options={[
+                                { label: `all (${totalCount})`, value: "all" },
+                                { label: `Completed (${completedCount})`, value: "complete" },
+                                { label: `Uncompleted (${uncompletedCount})`, value: "uncomplete" },
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        <Dropdown
+                            label="Sort"
+                            value={pendingSortBy}
+                            onChange={(e) => setPendingSortBy(e.target.value)}
+                            options={[
+                                { label: "Timestamp", value: "none" },
+                                { label: "Task", value: "task" },
+                                { label: "Priority", value: "priority" },
+                                { label: "Category", value: "category" },
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        <Dropdown
+                            label="Order By"
+                            value={pendingSortOrder}
+                            onChange={(e) => setPendingSortOrder(e.target.value)}
+                            options={[
+                                { label: "Ascending", value: "asc" },
+                                { label: "Descending", value: "desc" },
+                            ]}
+                        />
+                    </div>
+                    <Button variant="contained" disableElevation color="secondary" onClick={applyFilters} className='md:h-12'>
+                        Apply Filters
+                    </Button>
+                </div>
+                <div className='flex items-center justify-evenly lg:my-5 lg:mx-72 md:py-3'>
+                    <Button variant="contained" disableElevation color="success" onClick={markComplete} className=''>
+                        Mark All Complete
+                    </Button>
+                    <Button variant="contained" disableElevation color="error" onClick={() => {
+                        setTodos(todos.filter((item, index) => {
+                            return !item.strike
+                        }))
+                    }}>
+                        Delete All Complete
+                    </Button>
+                </div>
+                <Table todos={filteredTodos} handleDelete={handleDelete} toggle={toggle} handleEdit={handleEdit} />
             </div>
-            <div className='flex items-center justify-evenly'>
-                <div >
-                    <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-72' value={search} onChange={e => setSearch(e.target.value)} />
-                </div>
-                <div>
-                    {/* <p className='text-center'>Priority</p> */}
-                    <Dropdown
-                        label="Priority"
-                        value={pendingFilPriority}
-                        onChange={(e) => setPendingFilPriority(e.target.value)}
-                        options={[
-                            { label: `all (${totalCount})`, value: "all" },
-                            { label: `low (${lowCount})`, value: "low" },
-                            { label: `medium (${mediumCount})`, value: "medium" },
-                            { label: `high (${highCount})`, value: "high" },
-                        ]}
-                    />
-                </div>
-                <div>
-                    {/* <p className='text-center'>Category</p> */}
-                    <Dropdown
-                        label="Category"
-                        value={pendingFilCategory}
-                        onChange={(e) => setPendingFilCategory(e.target.value)}
-                        options={[
-                            { label: `all (${totalCount})`, value: "all" },
-                            { label: `Work (${workCount})`, value: "work" },
-                            { label: `Personal (${personalCount})`, value: "personal" },
-                        ]}
-                    />
-                </div>
-                <div>
-                    {/* <p className='text-center'>Status</p> */}
-                    <Dropdown
-                        label="Status"
-                        value={pendingFiltered}
-                        onChange={(e) => setPendingFiltered(e.target.value)}
-                        options={[
-                            { label: `all (${totalCount})`, value: "all" },
-                            { label: `Completed (${completedCount})`, value: "complete" },
-                            { label: `Uncompleted (${uncompletedCount})`, value: "uncomplete" },
-                        ]}
-                    />
-                </div>
-                <div>
-                    <Dropdown
-                        label="Sort"
-                        value={pendingSortBy}
-                        onChange={(e) => setPendingSortBy(e.target.value)}
-                        options={[
-                            { label: "Timestamp", value: "none" },
-                            { label: "Task", value: "task" },
-                            { label: "Priority", value: "priority" },
-                            { label: "Category", value: "category" },
-                        ]}
-                    />
-                </div>
-                <div>
-                    <Dropdown
-                        label="Order By"
-                        value={pendingSortOrder}
-                        onChange={(e) => setPendingSortOrder(e.target.value)}
-                        options={[
-                            { label: "Ascending", value: "asc" },
-                            { label: "Descending", value: "desc" },
-                        ]}
-                    />
-                </div>
-                <Button variant="contained" disableElevation color="secondary" onClick={applyFilters}>
-                    Apply Filters
-                </Button>
-            </div>
-            <div className='flex items-center justify-evenly my-5 mx-72'>
-                <Button variant="contained" disableElevation color="success" onClick={markComplete}>
-                    Mark All Complete
-                </Button>
-                <Button variant="contained" disableElevation color="error" onClick={() => {
-                    setTodos(todos.filter((item, index) => {
-                        return !item.strike
-                    }))
-                }}>
-                    Delete All Complete
-                </Button>
-            </div>
-            <Table todos={filteredTodos} handleDelete={handleDelete} toggle={toggle} handleEdit={handleEdit} />
         </>
     );
 };
