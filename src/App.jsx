@@ -232,7 +232,7 @@ export default function App() {
                         </div>
                     </div>
                 </div>
-                <div className='flex flex-wrap xl:flex-nowrap md:items-center md:justify-center md:gap-5 gap-y-5'>
+                <div className='flex flex-wrap xl:flex-nowrap items-center justify-center md:gap-5 gap-y-5'>
                     <div >
                         <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-64' value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
