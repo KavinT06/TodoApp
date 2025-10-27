@@ -184,7 +184,7 @@ export default function App() {
         <>
             <h1 className='text-4xl text-center bg-gray-200 h-12 font-inter'>Todo App</h1>
             <div className='lg:mx-auto lg:max-w-full py-8 p-6 lg:px-16'>
-                <div className='flex flex-wrap md:flex-nowrap items-center justify-center gap-5 md:gap-0'>
+                {/* <div className='flex flex-wrap md:flex-nowrap items-center justify-center gap-5 md:gap-0'>
                     <div className='md:w-96 md:my-5 md:mx-5'>
                         <TextField id="outlined-basic" label="Enter Tasks..." name="task" variant="outlined" className='w-72' value={task} onChange={handleChange} onKeyDown={(e) => {
                             if (task.trim() !== '' && e.key === 'Enter') {
@@ -231,7 +231,7 @@ export default function App() {
                             </Button>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div className='flex flex-wrap xl:flex-nowrap items-center justify-center md:gap-5 gap-y-5'>
                     <div >
                         <TextField id="outlined-basic" label="Search Tasks" variant="outlined" className='w-64' value={search} onChange={e => setSearch(e.target.value)} />
