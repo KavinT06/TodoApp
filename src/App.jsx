@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import { TextField } from '@mui/material';
 import Dropdown from './components/Dropdown';
 import Table from './components/Table';
+import TaskModal from './components/TaskModal';
 
 export default function App() {
 
@@ -20,7 +21,7 @@ export default function App() {
     const [filPriority, setFilPriority] = useState("all");
     const [activeFiltered, setActiveFiltered] = useState("all");
 
-    const [editTaskId, setEditTaskId] = useState(null);
+    // const [editTaskId, setEditTaskId] = useState(null);    //not in use. from GENERIC MODAL
     const [search, setSearch] = useState("");
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -103,6 +104,62 @@ export default function App() {
     }
 
 
+    const [modalOpen, setModalOpen] = useState(false);             // modal open/close
+    const [modalMode, setModalMode] = useState('add');             // 'add' | 'edit'
+    const [modalTaskData, setModalTaskData] = useState({           // holds current form values
+        name: '',
+        priority: 'low',
+        category: 'work',
+        index: null // when editing, store originalIndex here
+    });
+
+
+    // 🔹 NEW — Open modal in Add mode
+    const openAddModal = () => {
+        setModalMode('add');
+        setModalTaskData({ name: '', priority: 'low', category: 'work', index: null });
+        setModalOpen(true);
+    };
+
+    // 🔹 NEW — Open modal in Edit mode with originalIndex (from Table)
+    // Table will call openEditModal(originalIndex)
+    const openEditModal = (originalIndex) => {
+        const taskToEdit = todos[originalIndex];
+        if (!taskToEdit) return;
+        setModalMode('edit');
+        setModalTaskData({
+            name: taskToEdit.name,
+            priority: taskToEdit.priority,
+            category: taskToEdit.category,
+            index: originalIndex
+        });
+        setModalOpen(true);
+    };
+
+    // 🔹 NEW — Save from modal (both add & edit)
+    const handleModalSave = (formData) => {
+        if (modalMode === 'add') {
+            const newTask = {
+                name: formData.name,
+                priority: formData.priority,
+                category: formData.category,
+                strike: false
+            };
+            setTodos(prev => [...prev, newTask]);
+        } else {
+            // edit mode
+            const idx = modalTaskData.index;
+            if (idx === null || idx === undefined) {
+                setModalOpen(false);
+                return;
+            }
+            setTodos(prev => prev.map((item, i) => i === idx ? { ...item, name: formData.name, priority: formData.priority, category: formData.category } : item));
+        }
+        setModalOpen(false);
+    };
+
+
+
     const handleEdit = (originalIndex) => {
         const taskToEdit = todos[originalIndex];
         if (taskToEdit) {
@@ -114,7 +171,7 @@ export default function App() {
     }
 
     const handleDelete = (originalIndex) => {
-        setTodos(todos.filter((_, index) => index !== originalIndex));
+        setTodos(prev => prev.filter((_, idx) => idx !== originalIndex));
     }
 
     const toggle = (originalIndex) => {
@@ -316,7 +373,15 @@ export default function App() {
                         Delete All Complete
                     </Button>
                 </div>
-                <Table todos={filteredTodos} handleDelete={handleDelete} toggle={toggle} handleEdit={handleEdit} />
+                <Table todos={filteredTodos} onOpenAdd={openAddModal} onOpenEdit={openEditModal} onDelete={handleDelete} onToggle={toggle} />
+                <TaskModal
+                    open={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    mode={modalMode}
+                    taskData={modalTaskData}
+                    setTaskData={setModalTaskData}
+                    onSave={handleModalSave}
+                />
             </div>
         </>
     );

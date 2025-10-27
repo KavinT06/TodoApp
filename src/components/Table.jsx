@@ -11,7 +11,7 @@ import { Button, Modal, Box, TextField, Select, MenuItem, FormControl, InputLabe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-export default function TodoTable({ todos, setTodos, toggle, handleEdit ,}) {
+export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onToggle }) {
     // Pagination states
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -92,7 +92,7 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit ,}) {
     return (
         <div>
                 <div className='flex justify-end pr-40 w-full'>
-                <Button variant="contained" disableElevation color="primary" style={{padding: '5px 20px'}}>
+                <Button variant="contained" disableElevation color="primary" style={{padding: '5px 20px'}} onClick={ () => onOpenAdd()}>
                     Add
                 </Button>
             </div>
@@ -171,7 +171,7 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit ,}) {
                                                 width: { xs: '15%', sm: 'auto' }
                                             }}>{index + 1 + "."}</TableCell>
                                             <TableCell
-                                                onClick={() => toggle(originalIndex)}
+                                                onClick={() => onToggle(originalIndex)}
                                                 sx={{
                                                     textDecoration: item.strike ? 'line-through' : 'none',
                                                     cursor: 'pointer',
@@ -255,21 +255,7 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit ,}) {
                                                                 color: '#b71c1c'
                                                             }
                                                         }}
-                                                        onClick={() => {
-                                                            // Use setTodos to delete from the original todos array using originalIndex
-                                                            setTodos(prevTodos => {
-                                                                const newTodos = prevTodos.filter((_, todoIndex) => todoIndex !== originalIndex);
-                                                                return newTodos;
-                                                            });
-                                                            // Reset to first page if current page becomes empty
-                                                            const newFilteredLength = todos.length - 1;
-                                                            const newPageCount = Math.ceil(newFilteredLength / rowsPerPage);
-                                                            if (page >= newPageCount && newPageCount > 0) {
-                                                                setPage(newPageCount - 1);
-                                                            } else if (newFilteredLength === 0) {
-                                                                setPage(0);
-                                                            }
-                                                        }}
+                                                        onClick={() => onDelete(originalIndex)}
                                                     />
                                                     <FontAwesomeIcon
                                                         icon={faPenToSquare}
@@ -281,9 +267,9 @@ export default function TodoTable({ todos, setTodos, toggle, handleEdit ,}) {
                                                             marginRight: "1px",
                                                             width: 25
                                                         }}
-                                                        onClick={() => handleEditClick(originalIndex)}
+                                                        onClick={() => onOpenEdit(originalIndex)}
                                                     />
-                                                    <div onClick={() => toggle(originalIndex)} style={{ cursor: 'pointer' }}>
+                                                    <div onClick={() => onToggle(originalIndex)} style={{ cursor: 'pointer' }}>
                                                         {item.strike ? (
                                                             <FontAwesomeIcon icon={faCircleXmark} style={{
                                                                 fontSize: '20px',
