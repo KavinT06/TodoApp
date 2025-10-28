@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
-import { Button, Modal, Box, TextField, Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,13 +15,6 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
     // Pagination states
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-    // Edit Modal states
-    const [editModalOpen, setEditModalOpen] = React.useState(false);
-    const [editingTask, setEditingTask] = React.useState(null);
-    const [editTaskName, setEditTaskName] = React.useState('');
-    const [editTaskPriority, setEditTaskPriority] = React.useState('');
-    const [editTaskCategory, setEditTaskCategory] = React.useState('');
 
     // Pagination handlers
     const handleChangePage = (event, newPage) => {
@@ -31,59 +24,6 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
-    };
-
-    // Edit Modal handlers
-    const handleEditClick = (originalIndex) => {
-        const taskToEdit = todos.find((_, index) => index === originalIndex);
-        if (taskToEdit) {
-            setEditingTask(originalIndex);
-            setEditTaskName(taskToEdit.name);
-            setEditTaskPriority(taskToEdit.priority);
-            setEditTaskCategory(taskToEdit.category);
-            setEditModalOpen(true);
-        }
-    };
-
-    const handleEditSave = () => {
-        if (editTaskName.trim() !== '') {
-            setTodos(prevTodos => {
-                const updatedTodos = prevTodos.map((item, index) => {
-                    if (index === editingTask) {
-                        return {
-                            ...item,
-                            name: editTaskName,
-                            priority: editTaskPriority,
-                            category: editTaskCategory
-                        };
-                    }
-                    return item;
-                });
-                return updatedTodos;
-            });
-            handleEditClose();
-        }
-    };
-
-    const handleEditClose = () => {
-        setEditModalOpen(false);
-        setEditingTask(null);
-        setEditTaskName('');
-        setEditTaskPriority('');
-        setEditTaskCategory('');
-    };
-
-    // Modal style
-    const modalStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: { xs: '90%', sm: 400 },
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        boxShadow: 24,
-        p: 4,
     };
 
     // Slice todos for current page
@@ -304,72 +244,6 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Paper>
-
-                {/* Edit Modal */}
-                <Modal
-                    open={editModalOpen}
-                    onClose={handleEditClose}
-                    aria-labelledby="edit-task-modal"
-                    aria-describedby="edit-task-form"
-                >
-                    <Box sx={modalStyle}>
-                        <Typography id="edit-task-modal" variant="h6" component="h2" sx={{ mb: 3, color: '#1976d2', fontWeight: 600 }}>
-                            Edit Task
-                        </Typography>
-
-                        <TextField
-                            fullWidth
-                            label="Task Name"
-                            value={editTaskName}
-                            onChange={(e) => setEditTaskName(e.target.value)}
-                            sx={{ mb: 2 }}
-                            variant="outlined"
-                        />
-
-                        <FormControl fullWidth sx={{ mb: 2 }}>
-                            <InputLabel>Priority</InputLabel>
-                            <Select
-                                value={editTaskPriority}
-                                label="Priority"
-                                onChange={(e) => setEditTaskPriority(e.target.value)}
-                            >
-                                <MenuItem value="low">Low</MenuItem>
-                                <MenuItem value="medium">Medium</MenuItem>
-                                <MenuItem value="high">High</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <FormControl fullWidth sx={{ mb: 3 }}>
-                            <InputLabel>Category</InputLabel>
-                            <Select
-                                value={editTaskCategory}
-                                label="Category"
-                                onChange={(e) => setEditTaskCategory(e.target.value)}
-                            >
-                                <MenuItem value="work">Work</MenuItem>
-                                <MenuItem value="personal">Personal</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                            <Button
-                                variant="outlined"
-                                onClick={handleEditClose}
-                                sx={{ borderRadius: 2 }}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={handleEditSave}
-                                disabled={!editTaskName.trim()}
-                                sx={{ borderRadius: 2 }}
-                            >
-                                Save Changes
-                            </Button>
-                        </Box>
-                    </Box>
-                </Modal>
             </div>
         </div>
     );

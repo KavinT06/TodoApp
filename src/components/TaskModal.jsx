@@ -27,14 +27,13 @@ const modalStyle = {
 };
 
 export default function TaskModal({ open, onClose, mode = 'add', taskData, setTaskData, onSave }) {
-    // Populate modal fields when editing
+    // Populate modal fields when editing - only run when modal opens, not on every taskData change
     useEffect(() => {
-        if (taskData) {
-            // taskData expected shape: { name, priority, category, index }
-            setTaskData(prev => ({ ...prev, name: taskData.name ?? '', priority: taskData.priority ?? 'low', category: taskData.category ?? 'work', index: taskData.index ?? null }));
+        if (open && taskData) {
+            // Only set initial data when modal opens, not during typing
+            setTaskData(taskData);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [taskData, open]);
+    }, [open, setTaskData]); // Remove taskData from dependencies to prevent interference during typing
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -43,7 +42,7 @@ export default function TaskModal({ open, onClose, mode = 'add', taskData, setTa
 
     const handleSaveClick = () => {
         // validate
-        if (!taskData.name || !taskData.name.trim()) return;
+        if (!taskData?.name || !taskData.name.trim()) return;
         onSave({ name: taskData.name.trim(), priority: taskData.priority, category: taskData.category });
     };
 
@@ -58,14 +57,15 @@ export default function TaskModal({ open, onClose, mode = 'add', taskData, setTa
                     fullWidth
                     label="Task Name"
                     name="name"
-                    value={taskData.name || ''}
+                    value={taskData?.name || ''}
                     onChange={handleChange}
                     sx={{ mb: 2 }}
+                    autoFocus
                 />
 
                 <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Priority</InputLabel>
-                    <Select name="priority" value={taskData.priority || 'low'} label="Priority" onChange={handleChange}>
+                    <Select name="priority" value={taskData?.priority || 'low'} label="Priority" onChange={handleChange}>
                         <MenuItem value="low">Low</MenuItem>
                         <MenuItem value="medium">Medium</MenuItem>
                         <MenuItem value="high">High</MenuItem>
@@ -74,7 +74,7 @@ export default function TaskModal({ open, onClose, mode = 'add', taskData, setTa
 
                 <FormControl fullWidth sx={{ mb: 3 }}>
                     <InputLabel>Category</InputLabel>
-                    <Select name="category" value={taskData.category || 'work'} label="Category" onChange={handleChange}>
+                    <Select name="category" value={taskData?.category || 'work'} label="Category" onChange={handleChange}>
                         <MenuItem value="work">Work</MenuItem>
                         <MenuItem value="personal">Personal</MenuItem>
                     </Select>
@@ -84,7 +84,7 @@ export default function TaskModal({ open, onClose, mode = 'add', taskData, setTa
                     <Button variant="outlined" onClick={onClose} sx={{ borderRadius: 2 }}>
                         Cancel
                     </Button>
-                    <Button variant="contained" onClick={handleSaveClick} disabled={!taskData.name || !taskData.name.trim()} sx={{ borderRadius: 2 }}>
+                    <Button variant="contained" onClick={handleSaveClick} disabled={!taskData?.name || !taskData.name.trim()} sx={{ borderRadius: 2 }}>
                         {mode === 'edit' ? 'Save Changes' : 'Add Task'}
                     </Button>
                 </Box>
