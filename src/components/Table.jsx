@@ -7,14 +7,47 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
-import { Button } from '@mui/material';
+// import { Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'; // ✅ ADDED
+
 
 export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onToggle, sortConfig, handleSort }) {
     // Pagination states
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+
+    // ✅ ADDED - delete confirmation dialog state
+    const [openConfirm, setOpenConfirm] = React.useState(false);
+    const [confirmIndex, setConfirmIndex] = React.useState(null);
+    const [confirmName, setConfirmName] = React.useState(''); // optional - show task name in dialog
+
+
+    // ✅ ADDED - handlers for confirmation dialog
+    const handleConfirmOpen = (index, name) => {
+        setConfirmIndex(index);
+        setConfirmName(name || '');
+        setOpenConfirm(true);
+    }
+
+    const handleConfirmCancel = () => {
+        setOpenConfirm(false);
+        setConfirmIndex(null);
+        setConfirmName('');
+    }
+
+    const handleConfirmDelete = () => {
+        if (confirmIndex !== null && typeof onDelete === 'function') {
+            onDelete(confirmIndex); // call parent's delete with the originalIndex
+        }
+        setOpenConfirm(false);
+        setConfirmIndex(null);
+        setConfirmName('');
+    }
+
+
 
     // Pagination handlers
     const handleChangePage = (event, newPage) => {
@@ -218,7 +251,7 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
                                                                 color: '#b71c1c'
                                                             }
                                                         }}
-                                                        onClick={() => onDelete(originalIndex)}
+                                                        onClick={() => { setConfirmIndex(originalIndex); setConfirmName(item.name); setOpenConfirm(true); }}
                                                     />
                                                     <FontAwesomeIcon
                                                         icon={faPenToSquare}
@@ -268,6 +301,19 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
                     />
                 </Paper>
             </div>
+
+            <Dialog open={openConfirm} onClose={handleConfirmCancel} aria-labelledby="confirm-delete-title">
+                <DialogTitle id="confirm-delete-title">Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this task? <strong>{confirmName}</strong>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleConfirmCancel} variant="outlined">Cancel</Button>
+                    <Button onClick={handleConfirmDelete} variant="contained" color="error">Delete</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
