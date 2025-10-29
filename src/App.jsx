@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useMemo } from 'react';
 import { Button } from '@mui/material';
 import { TextField } from '@mui/material';
 import Dropdown from './components/Dropdown';
@@ -21,7 +21,7 @@ export default function App() {
     const [filPriority, setFilPriority] = useState("all");
     const [activeFiltered, setActiveFiltered] = useState("all");
 
-    // const [editTaskId, setEditTaskId] = useState(null);    //not in use. from GENERIC MODAL
+    const [editTaskId, setEditTaskId] = useState(null);
     const [search, setSearch] = useState("");
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -47,6 +47,68 @@ export default function App() {
     }, [todos, isLoaded])
 
 
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: 'neutral',
+    });
+
+
+    const handleSort = (key) => {
+        setSortConfig((prev) => {
+            if (prev.key === key) {
+                const nextDirection =
+                    prev.direction === 'asc'
+                        ? 'desc'
+                        : prev.direction === 'desc'
+                            ? 'neutral'
+                            : 'asc';
+                return { key, direction: nextDirection };
+            }
+            return { key, direction: 'asc' }; // start with ascending
+        });
+    };
+
+
+    // First, add originalIndex to todos before sorting
+    const todosWithIndex = todos.map((item, index) => ({ ...item, originalIndex: index }));
+    
+    const sortedTodos = useMemo(() => {
+        let sorted = [...todosWithIndex];
+        if (sortConfig.direction === 'neutral' || !sortConfig.key) return sorted;
+
+        if (sortConfig.key === 'serial') {
+            // Sort by ID (creation time) - newer items have higher IDs
+            sorted.sort((a, b) => {
+                const aId = a.id || 0; // fallback for items without ID
+                const bId = b.id || 0;
+                return sortConfig.direction === 'asc' ? aId - bId : bId - aId;
+            });
+        } else if (sortConfig.key === 'name') {
+            sorted.sort((a, b) => {
+                if (sortConfig.direction === 'asc')
+                    return a.name.localeCompare(b.name);
+                else return b.name.localeCompare(a.name);
+            });
+        } else if (sortConfig.key === 'priority') {
+            const priorityOrder = { low: 1, medium: 2, high: 3 };
+            sorted.sort((a, b) => {
+                if (sortConfig.direction === 'asc')
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                else return priorityOrder[b.priority] - priorityOrder[a.priority];
+            });
+        } else if (sortConfig.key === 'category') {
+            const categoryOrder = { personal: 1, work: 2 };
+            sorted.sort((a, b) => {
+                if (sortConfig.direction === 'asc')
+                    return categoryOrder[a.category] - categoryOrder[b.category];
+                else return categoryOrder[b.category] - categoryOrder[a.category];
+            });
+        }
+
+        return sorted;
+    }, [todosWithIndex, sortConfig]);
+
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         switch (name) {
@@ -66,12 +128,12 @@ export default function App() {
 
 
     const submitClick = () => {
-        if (task.trim !== '') {
+        if (task.trim() !== '') {
             if (editTaskId !== null) {
                 const updatedTasks = todos.map((item, index) => {
                     if (index === editTaskId) {
                         return {
-                            ...task,
+                            ...item,
                             name: task,
                             category: category,
                             priority: priority,
@@ -84,6 +146,7 @@ export default function App() {
                 setEditTaskId(null)
             } else {
                 const newTask = {
+                    id: Date.now(), // Add unique ID for serial sorting
                     name: task,
                     category: category,
                     priority: priority,
@@ -140,6 +203,7 @@ export default function App() {
     const handleModalSave = (formData) => {
         if (modalMode === 'add') {
             const newTask = {
+                id: Date.now(), // Add unique ID for serial sorting
                 name: formData.name,
                 priority: formData.priority,
                 category: formData.category,
@@ -182,8 +246,7 @@ export default function App() {
         )
     }
 
-    let filteredTodos = todos
-        .map((item, index) => ({ ...item, originalIndex: index }))
+    let filteredTodos = sortedTodos
         .filter((item) => {
             if (activeFiltered === "complete") return item.strike;
             if (activeFiltered === "uncomplete") return !item.strike;
@@ -205,20 +268,23 @@ export default function App() {
             return item.name.toLowerCase().includes(search.trim().toLowerCase());
         });
 
-    filteredTodos = [...filteredTodos].sort((a, b) => {
-        if (sortBy === "none") return 0;
+    // Apply dropdown-based sorting only if table header sorting is neutral
+    if (sortConfig.direction === 'neutral' || !sortConfig.key) {
+        filteredTodos = [...filteredTodos].sort((a, b) => {
+            if (sortBy === "none") return 0;
 
-        let comparison = 0;
-        if (sortBy === "task") {
-            comparison = a.name.localeCompare(b.name);
-        } else if (sortBy === "priority") {
-            comparison = PRIORITY_INDEXES[a.priority] - PRIORITY_INDEXES[b.priority];
-        } else if (sortBy === "category") {
-            comparison = a.category.localeCompare(b.category);
-        }
+            let comparison = 0;
+            if (sortBy === "task") {
+                comparison = a.name.localeCompare(b.name);
+            } else if (sortBy === "priority") {
+                comparison = PRIORITY_INDEXES[a.priority] - PRIORITY_INDEXES[b.priority];
+            } else if (sortBy === "category") {
+                comparison = a.category.localeCompare(b.category);
+            }
 
-        return sortOrder === "asc" ? comparison : -comparison;
-    })
+            return sortOrder === "asc" ? comparison : -comparison;
+        });
+    }
 
     const markComplete = () => {
         const updatedTodos = todos.map((item) => {
@@ -333,7 +399,7 @@ export default function App() {
                             ]}
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <Dropdown
                             label="Sort"
                             value={pendingSortBy}
@@ -356,7 +422,7 @@ export default function App() {
                                 { label: "Descending", value: "desc" },
                             ]}
                         />
-                    </div>
+                    </div> */}
                     <Button variant="contained" disableElevation color="secondary" onClick={applyFilters} className='md:h-12'>
                         Apply Filters
                     </Button>
@@ -373,7 +439,15 @@ export default function App() {
                         Delete All Complete
                     </Button>
                 </div>
-                <Table todos={filteredTodos} onOpenAdd={openAddModal} onOpenEdit={openEditModal} onDelete={handleDelete} onToggle={toggle} />
+                <Table 
+                    todos={filteredTodos} 
+                    onOpenAdd={openAddModal} 
+                    onOpenEdit={openEditModal} 
+                    onDelete={handleDelete} 
+                    onToggle={toggle}
+                    sortConfig={sortConfig}
+                    handleSort={handleSort}
+                />
                 <TaskModal
                     open={modalOpen}
                     onClose={() => setModalOpen(false)}

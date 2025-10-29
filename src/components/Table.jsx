@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare, faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onToggle }) {
+export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onToggle, sortConfig, handleSort }) {
     // Pagination states
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -31,8 +31,8 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
 
     return (
         <div>
-                <div className='flex justify-end pr-40 w-full'>
-                <Button variant="contained" disableElevation color="primary" style={{padding: '5px 20px'}} onClick={ () => onOpenAdd()}>
+            <div className='flex justify-end pr-40 w-full ml-32 md:ml-10 lg:ml-0'>
+                <Button variant="contained" disableElevation color="primary" style={{ padding: '5px 20px' }} onClick={() => onOpenAdd()}>
                     Add
                 </Button>
             </div>
@@ -66,23 +66,46 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
                                     <TableCell sx={{
                                         fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
                                         padding: { xs: '8px 4px', md: '16px' },
-                                        width: { xs: '15%', sm: 'auto' }
-                                    }}>S.No</TableCell>
+                                        width: { xs: '15%', sm: 'auto' },
+                                        fontWeight: 'bold'
+                                    }}>S.No
+                                    </TableCell>
                                     <TableCell sx={{
                                         fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
                                         padding: { xs: '8px 4px', md: '16px' },
-                                        width: { xs: '35%', sm: 'auto' }
-                                    }}>Task</TableCell>
+                                        width: { xs: '35%', sm: 'auto' },
+                                        cursor: 'pointer', fontWeight: 'bold'
+                                    }} onClick={() => handleSort('name')}>Task {sortConfig.key === 'name' &&
+                                        (sortConfig.direction === 'asc'
+                                            ? ' 🔼'
+                                            : sortConfig.direction === 'desc'
+                                                ? ' 🔽'
+                                                : '')}
+                                    </TableCell>
                                     <TableCell sx={{
                                         fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
                                         padding: { xs: '8px 4px', md: '16px' },
-                                        width: { xs: '20%', sm: 'auto' }
-                                    }}>Priority</TableCell>
+                                        width: { xs: '20%', sm: 'auto' },
+                                        cursor: 'pointer', fontWeight: 'bold'
+                                    }} onClick={() => handleSort('priority')}>Priority {sortConfig.key === 'priority' &&
+                                        (sortConfig.direction === 'asc'
+                                            ? ' 🔼'
+                                            : sortConfig.direction === 'desc'
+                                                ? ' 🔽'
+                                                : '')}
+                                    </TableCell>
                                     <TableCell sx={{
                                         fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
                                         padding: { xs: '8px 4px', md: '16px' },
-                                        width: { xs: '15%', sm: 'auto' }
-                                    }}>Category</TableCell>
+                                        width: { xs: '15%', sm: 'auto' },
+                                        cursor: 'pointer', fontWeight: 'bold'
+                                    }} onClick={() => handleSort('category')}>Category {sortConfig.key === 'category' &&
+                                        (sortConfig.direction === 'asc'
+                                            ? ' 🔼'
+                                            : sortConfig.direction === 'desc'
+                                                ? ' 🔽'
+                                                : '')}
+                                    </TableCell>
                                     <TableCell sx={{
                                         fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
                                         padding: { xs: '8px 4px', md: '16px' },
@@ -109,7 +132,7 @@ export default function TodoTable({ todos, onOpenAdd, onOpenEdit, onDelete, onTo
                                                 fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
                                                 padding: { xs: '8px 4px', md: '16px' },
                                                 width: { xs: '15%', sm: 'auto' }
-                                            }}>{index + 1 + "."}</TableCell>
+                                            }}>{page * rowsPerPage + index + 1 + "."}</TableCell>
                                             <TableCell
                                                 onClick={() => onToggle(originalIndex)}
                                                 sx={{
